@@ -90,15 +90,15 @@ df_labels_train=load_dataframe(filename="train_labels.csv")
 
 df=pd.merge(df,df_labels_train,on="patient_id",how="inner")
 
-kf=KFold(5,shuffle=True)
+kf=KFold(10,shuffle=True)
 
-lr=LogisticRegression()
+lr=LogisticRegression(solver="liblinear")
 log_loss_logistic=-np.mean(cross_val_score(lr,df[col_init],df["heart_disease_present"],scoring="neg_log_loss",cv=kf))
 
-clf=DecisionTreeClassifier()
+clf=DecisionTreeClassifier(random_state=1, min_samples_leaf=2, splitter="random", max_features="auto")
 log_loss_decision_tree=-np.mean(cross_val_score(clf,df[col_init],df["heart_disease_present"],scoring="neg_log_loss",cv=kf))
 
-clf2=RandomForestClassifier(n_estimators=150, min_samples_leaf=2)
+clf2=RandomForestClassifier(n_estimators=150, min_samples_leaf=2, random_state=1, max_features="auto")
 log_loss_random_forest=-np.mean(cross_val_score(clf2,df[col_init],df["heart_disease_present"],scoring="neg_log_loss",cv=kf))
 
 print(log_loss_logistic, log_loss_decision_tree, log_loss_random_forest)
