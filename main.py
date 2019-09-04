@@ -8,7 +8,7 @@ import numpy as np
 
 # local imports
 from visualization.display import display_correlation_matrix
-from models import randomforest
+from models import select_model
 
 
 pd.set_option("display.max_columns", 20)
@@ -87,15 +87,4 @@ df_labels_train=load_dataframe(filename="train_labels.csv")
 
 df=pd.merge(df,df_labels_train,on="patient_id",how="inner")
 
-estimators=[100, 150, 500]
-features_used=["auto", "sqrt", "log2"]
-depth=[20, 50, None]
-samples_split=[2,50]
-samples_leaf=[2,5]
-
-for n in estimators:
-    for feat in features_used:
-        for d in depth:
-            for split in samples_split:
-                for leaf in samples_leaf:
-                    print(n, feat, d, split, leaf,": ", randomforest(df,col_init,n, feat, d, split, leaf))
+print(select_model(df,col_init))
