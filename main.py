@@ -5,13 +5,10 @@ from pathlib import Path
 # third-party imports
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import cross_val_score, KFold
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
 
 # local imports
 from visualization.display import display_correlation_matrix
+from models import randomforest
 
 
 pd.set_option("display.max_columns", 20)
@@ -90,18 +87,15 @@ df_labels_train=load_dataframe(filename="train_labels.csv")
 
 df=pd.merge(df,df_labels_train,on="patient_id",how="inner")
 
-kf=KFold(10,shuffle=True)
+estimators=[100, 150, 500]
+features_used=["auto", "sqrt", "log2"]
+depth=[20, 50, None]
+samples_split=[2,50]
+samples_leaf=[2,5]
 
-lr=LogisticRegression(solver="liblinear")
-log_loss_logistic=-np.mean(cross_val_score(lr,df[col_init],df["heart_disease_present"],scoring="neg_log_loss",cv=kf))
-
-clf=DecisionTreeClassifier(random_state=1, min_samples_leaf=2, splitter="random", max_features="auto")
-log_loss_decision_tree=-np.mean(cross_val_score(clf,df[col_init],df["heart_disease_present"],scoring="neg_log_loss",cv=kf))
-
-clf2=RandomForestClassifier(n_estimators=150, min_samples_leaf=2, random_state=1, max_features="auto")
-log_loss_random_forest=-np.mean(cross_val_score(clf2,df[col_init],df["heart_disease_present"],scoring="neg_log_loss",cv=kf))
-
-print(log_loss_logistic, log_loss_decision_tree, log_loss_random_forest)
-
-
-
+for n in estimators:
+    for feat in features_used:
+        for d in depth:
+            for split in samples_split:
+                for leaf in samples_leaf:
+                    print(n, feat, d, split, leaf,": ", randomforest(df,col_init,n, feat, d, split, leaf))
