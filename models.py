@@ -1,55 +1,54 @@
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import KFold
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import KFold, GridSearchCV
+from sklearn.tree import DecisionTreeClassifier
+
+MODELS = [
+    {
+        "name": "logistic regression",
+        "model": LogisticRegression(),
+        "hyperparameters": {"solver": ["newton-cg", "lbfgs", "liblinear"]}
+    },
+    {
+        "name": "decision tree",
+        "model": DecisionTreeClassifier(),
+        "hyperparameters": {
+            "max_features": ["log2", "sqrt"],
+            "min_samples_leaf": [1, 5, 8]
+        }
+    },
+    {
+        "name": "random forest",
+        "model": RandomForestClassifier(),
+        "hyperparameters":
+        {
+            "n_estimators": [4, 6, 9],
+            "criterion": ["entropy", "gini"],
+            "max_depth": [2, 5, 10],
+            "max_features": ["log2", "sqrt"],
+            "min_samples_leaf": [1, 5, 8],
+            "min_samples_split": [2, 3, 5]
+        }
+    }
+]
 
 
-kf = KFold(10, shuffle=True)
+def select_model(df, cols):
+    for model in MODELS:
+        print(model["name"])
 
-def select_model(df,cols):
+        grid_search = GridSearchCV(
+            estimator=model["estimator"],
+            param_grid=model["hyperparameters"],
+            cv=KFold(10, shuffle=True),
+            scoring="neg_log_loss"
+        )
 
-	dictionnaires=[
-		{
-		"name" : "logistic regression",
-		"model" : LogisticRegression(),
-		"hyperparameters" :
-			{
-				"solver" : ["newton-cg", "lbfgs", "liblinear"]
-			}
-		},
-		{
-		"name" : "decision tree",
-		"model" : DecisionTreeClassifier(),
-		"hyperparameters" :
-			{
-				"max_features" : ["log2","sqrt"],
-	            "min_samples_leaf" : [1,5,8]
-			}
+        grid_search.fit(df[cols], df["heart_disease_present"])
 
-		},
-		{
-		"name" : "random forest",
-		"model" : RandomForestClassifier(),
-		"hyperparameters" :
-			{
-				 "n_estimators" : [4,6,9],
-	             "criterion" : ["entropy", "gini"],
-	             "max_depth" : [2,5,10],
-	             "max_features" : ["log2","sqrt"],
-	             "min_samples_leaf" : [1,5,8],
-	             "min_samples_split" : [2,3,5]
-			}
+        model["best_model_param"] = grid_search.best_params_
+        model["best_model_score"] = -grid_search.best_score_
+        model["best_model_estimator"] = grid_search.best_estimator_
 
-		}
-	]
-
-	for item in dictionnaires:
-		print(item["name"])
-		obj = GridSearchCV(item["model"],item["hyperparameters"],cv=kf, scoring="neg_log_loss")
-		obj.fit(df[cols],df["heart_disease_present"])
-		item["best_model_param"]=obj.best_params_
-		item["best_model_score"]=-obj.best_score_
-		item["best_model_estimator"]=obj.best_estimator_
-		print("Best Score: {}".format(item["best_model_score"]))
-		print("Best Parameters: {}\n".format(item["best_model_param"]))
+        print("Best Score: {}".format(model["best_model_score"]))
+        print("Best Parameters: {}\n".format(model["best_model_param"]))

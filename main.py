@@ -61,14 +61,21 @@ def no_null_values(df):
     return no_null
 
 
-def find_numerical_columns(df):
+def find_non_boolean_columns(df):
+    """
+    Args:
+        df (pd.DataFrame): Dataframe.
+
+    Returns:
+        columns (list): Array contiaining non boolean columns
+    """
     serie = df.isin([0, 1]).all(axis="index")
     columns = serie[serie == False].index.values
     return columns
 
 
 def normalize_numerical_columns(df):
-    non_boolean_columns = find_numerical_columns(df)
+    non_boolean_columns = find_non_boolean_columns(df)
     for column in non_boolean_columns:
         df[column] = (df[column] - df[column].mean()) / df[column].std()
     return df
@@ -79,12 +86,9 @@ df = convert_to_one_hot(df)
 assert no_null_values(df)
 df = normalize_numerical_columns(df)
 
-df=df.drop(["slope_1","normal","resting_ekg_0","chest_pain_3","num_major_vessels_0"],axis=1)
+df = df.drop(["slope_1","normal","resting_ekg_0","chest_pain_3","num_major_vessels_0"],axis=1)
 
-col_init=df.columns
-
-df_labels_train=load_dataframe(filename="train_labels.csv")
-
-df=pd.merge(df,df_labels_train,on="patient_id",how="inner")
-
-print(select_model(df,col_init))
+col_init = df.columns
+df_labels_train = load_dataframe(filename="train_labels.csv")
+df = pd.merge(df, df_labels_train, on="patient_id", how="inner")
+print(select_model(df, col_init))
