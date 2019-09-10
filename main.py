@@ -4,9 +4,11 @@ from pathlib import Path
 
 # third-party imports
 import pandas as pd
+import numpy as np
 
 # local imports
 from visualization.display import display_correlation_matrix
+from models import select_model
 
 
 pd.set_option("display.max_columns", 20)
@@ -76,4 +78,13 @@ df = load_dataframe(filename="train_values.csv")
 df = convert_to_one_hot(df)
 assert no_null_values(df)
 df = normalize_numerical_columns(df)
-display_correlation_matrix(df)
+
+df=df.drop(["slope_1","normal","resting_ekg_0","chest_pain_3","num_major_vessels_0"],axis=1)
+
+col_init=df.columns
+
+df_labels_train=load_dataframe(filename="train_labels.csv")
+
+df=pd.merge(df,df_labels_train,on="patient_id",how="inner")
+
+print(select_model(df,col_init))
