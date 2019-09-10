@@ -4,9 +4,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 
-import numpy as np
 
-kf=KFold(10,shuffle=True)
+kf = KFold(10, shuffle=True)
 
 def select_model(df,cols):
 
@@ -14,7 +13,7 @@ def select_model(df,cols):
 		{
 		"name" : "logistic regression",
 		"model" : LogisticRegression(),
-		"hyperparameters" : 
+		"hyperparameters" :
 			{
 				"solver" : ["newton-cg", "lbfgs", "liblinear"]
 			}
@@ -22,7 +21,7 @@ def select_model(df,cols):
 		{
 		"name" : "decision tree",
 		"model" : DecisionTreeClassifier(),
-		"hyperparameters" : 
+		"hyperparameters" :
 			{
 				"max_features" : ["log2","sqrt"],
 	            "min_samples_leaf" : [1,5,8]
@@ -32,7 +31,7 @@ def select_model(df,cols):
 		{
 		"name" : "random forest",
 		"model" : RandomForestClassifier(),
-		"hyperparameters" : 
+		"hyperparameters" :
 			{
 				 "n_estimators" : [4,6,9],
 	             "criterion" : ["entropy", "gini"],
