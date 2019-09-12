@@ -1,11 +1,13 @@
 # heart-disease
- Detect heart disease wth machine learning
+Predicting Heart Disease with machine learning
+
+## Introduction
+The dataset is from a study of heart disease that has been open to the public for many years. The study collects various measurements on patient health and cardiovascular statistics, and of course makes patient identities anonymous.
 
 ## Install Requirements
 ```bash
 pip install -r requirements.txt
 ```
-
 
 ## Download Data
 1. create a data/ folder
