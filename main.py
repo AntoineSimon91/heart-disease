@@ -42,8 +42,8 @@ DECISION_TREE = Model(
     }
 )
 
+if __name__ == "__main__":
 
-def main():
     train = DataSet()
     train.load_input("train_values.csv")
     train.convert_to_one_hot(
@@ -61,9 +61,3 @@ def main():
 
     models = [LOGISTIC_REGRESSION, RANDOM_FOREST, DECISION_TREE]
     model = select_best_model(train, models)
-
-    return model
-
-
-if __name__ == "__main__":
-    main()
