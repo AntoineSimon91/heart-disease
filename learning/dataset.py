@@ -32,7 +32,7 @@ class DataSet:
         Returns:
             input (pandas.DataFrame) : Input vectors dataframe
         """
-        print("load input")
+        print("Load input vectors")
         self.input = self._load_dataframe(filename)
         return self.input
 
@@ -45,7 +45,7 @@ class DataSet:
         Returns:
             input (pandas.Serie) : Output values 1D serie
         """
-        print("load output")
+        print("Load output values")
         self.output = self._load_dataframe(filename)
         if to_serie:
             self.output = self.output[self.output.columns[0]]
@@ -65,26 +65,26 @@ class DataSet:
             converter (dict): keys columns to convert to one hot
                 values prefix of the new columns
         """
-        print("convert columns to hot")
+        print("Convert columns to one hot")
         for column, prefix in converter.items():
             one_hot_df = pd.get_dummies(self.input[column], prefix=prefix)
             self.input = self.input.join([one_hot_df])
             self.input = self.input.drop([column], axis="columns")
         return self.input
 
-    def no_null_values(self):
-        """Avoid having null values during learing process.
+    def has_null_values(self):
+        """Return true if there is null values in the train input
 
         Returns:
             no_null (bool): True if there's no null
                 values in the dataframe
         """
-        no_null = not self.input.isnull().values.any()
+        no_null = self.input.isnull().values.any()
         return no_null
 
     def normalize_input(self):
         """Normalize columns values between -1 and 1"""
-        print("normalize input values")
+        print("Normalize input vectors")
         non_boolean_columns = self._find_non_boolean_columns()
         for column in non_boolean_columns:
             self.input[column] = self._normalize_columns(self.input[column])
