@@ -54,7 +54,9 @@ if __name__ == "__main__":
     train.load_output("train_labels.csv")
 
     models = [LOGISTIC_REGRESSION, RANDOM_FOREST, DECISION_TREE]
-    model = select_best_model(train, models)
+    for model in models:
+        model.fit_best_hyperparameters(train)
+    model = select_best_model(models)
 
     test = DataSet()
     test.load_input("test_values.csv")

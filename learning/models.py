@@ -3,14 +3,17 @@
 from sklearn.model_selection import KFold, GridSearchCV
 
 
-def select_best_model(training_set, models):
+def select_best_model(models):
     print("Select best model (estimator, hyperparameters):")
     best_model = None
-    global_best_score = 0
+    global_best_score = None
 
     for model in models:
-        best_score = model.fit_best_hyperparameters(training_set)
-        if best_score > global_best_score:
+        if global_best_score is None:
+            global_best_score = model.best_score
+
+        elif model.best_score < global_best_score:
+            global_best_score = model.best_score
             best_model = model
 
     return best_model
