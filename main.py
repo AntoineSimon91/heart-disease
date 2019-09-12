@@ -14,13 +14,13 @@ pd.set_option("display.max_columns", 20)
 pd.set_option('display.width', 120)
 
 # initialize machine learning models
-logistic_regression = Model(
+LOGISTIC_REGRESSION = Model(
     name="Logistic Regression",
     estimator=LogisticRegression(),
     hyperparameters={"solver": ["newton-cg", "lbfgs", "liblinear"]}
 )
 
-random_forest = Model(
+RANDOM_FOREST = Model(
     name="Random Forest",
     estimator=RandomForestClassifier(),
     hyperparameters={
@@ -33,7 +33,7 @@ random_forest = Model(
     }
 )
 
-decision_tree = Model(
+DECISION_TREE = Model(
     name="Decision Tree",
     estimator=DecisionTreeClassifier(),
     hyperparameters={
@@ -42,20 +42,28 @@ decision_tree = Model(
     }
 )
 
-# machine learning pipeline
-train = DataSet()
-train.load_input("train_values.csv")
-train.convert_to_one_hot(
-    converter={
-        'slope_of_peak_exercise_st_segment': 'slope',
-        'thal': None,
-        'chest_pain_type': 'chest_pain',
-        'resting_ekg_results': 'resting_ekg',
-        'num_major_vessels': 'num_major_vessels'
-    }
-)
-assert not train.has_null_values()
-train.normalize_input()
-train.load_output("train_labels.csv")
-models = [logistic_regression, decision_tree, random_forest]
-model = select_best_model(train, models)
+
+def main():
+    train = DataSet()
+    train.load_input("train_values.csv")
+    train.convert_to_one_hot(
+        converter={
+            'slope_of_peak_exercise_st_segment': 'slope',
+            'thal': None,
+            'chest_pain_type': 'chest_pain',
+            'resting_ekg_results': 'resting_ekg',
+            'num_major_vessels': 'num_major_vessels'
+        }
+    )
+    assert not train.has_null_values()
+    train.normalize_input()
+    train.load_output("train_labels.csv")
+
+    models = [LOGISTIC_REGRESSION, RANDOM_FOREST, DECISION_TREE]
+    model = select_best_model(train, models)
+
+    return model
+
+
+if __name__ == "__main__":
+    main()
