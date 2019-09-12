@@ -17,7 +17,9 @@ pd.set_option('display.width', 120)
 LOGISTIC_REGRESSION = Model(
     name="Logistic Regression",
     estimator=LogisticRegression(),
-    hyperparameters={"solver": ["newton-cg", "lbfgs", "liblinear"]}
+    hyperparameters={
+        "solver": ["newton-cg", "lbfgs", "liblinear"]
+    }
 )
 
 RANDOM_FOREST = Model(
@@ -42,22 +44,20 @@ DECISION_TREE = Model(
     }
 )
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     train = DataSet()
     train.load_input("train_values.csv")
-    train.convert_to_one_hot(
-        converter={
-            'slope_of_peak_exercise_st_segment': 'slope',
-            'thal': None,
-            'chest_pain_type': 'chest_pain',
-            'resting_ekg_results': 'resting_ekg',
-            'num_major_vessels': 'num_major_vessels'
-        }
-    )
+    train.convert_to_one_hot()
     assert not train.has_null_values()
     train.normalize_input()
     train.load_output("train_labels.csv")
 
     models = [LOGISTIC_REGRESSION, RANDOM_FOREST, DECISION_TREE]
     model = select_best_model(train, models)
+
+    test = DataSet()
+    test.load_input("test_values.csv")
+    test.convert_to_one_hot()
+    assert not test.has_null_values()
+    test.normalize_input()
