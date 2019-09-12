@@ -5,6 +5,14 @@ from pathlib import Path
 # third-party imports
 import pandas as pd
 
+ONE_HOT_CONVERTER = {
+    'slope_of_peak_exercise_st_segment': 'slope',
+    'thal': None,
+    'chest_pain_type': 'chest_pain',
+    'resting_ekg_results': 'resting_ekg',
+    'num_major_vessels': 'num_major_vessels'
+}
+
 
 class DataSet:
     """Supervised learning dataset.
@@ -57,7 +65,7 @@ class DataSet:
         df = pd.read_csv(filepath, index_col=0)
         return df
 
-    def convert_to_one_hot(self, converter):
+    def convert_to_one_hot(self, converter=ONE_HOT_CONVERTER):
         """Convert train and test dataframe columns
         to one-hot vector.
 
