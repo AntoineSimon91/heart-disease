@@ -1,4 +1,8 @@
 
+# local imports
+import datetime
+from pathlib import Path
+
 # third-party imports
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -45,7 +49,18 @@ DECISION_TREE = Model(
 )
 
 
-if __name__ == "__main__":
+def save_submission_file(test):
+    print("Save submission file")
+    assert hasattr(test, "output")
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{timestamp}_test_labels.csv"
+    filepath = Path("data", "submissions", filename)
+    filepath.parent.mkdir(exist_ok=True)
+    test.output.to_csv(filepath)
+
+
+def main():
     train = DataSet()
     train.load_input("train_values.csv")
     train.convert_to_one_hot()
@@ -63,3 +78,17 @@ if __name__ == "__main__":
     test.convert_to_one_hot()
     assert not test.has_null_values()
     test.normalize_input()
+
+    prediction = model.estimator.predict(test.input)
+
+    test.output = pd.DataFrame(
+        data=prediction,
+        index=test.input.index,
+        columns=["heart_disease_present"]
+    )
+
+    save_submission_file(test)
+
+
+if __name__ == "__main__":
+    main()
