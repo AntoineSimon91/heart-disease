@@ -35,7 +35,10 @@ MODELS = [
 ]
 
 
-def select_model(input_vectors, output_values):
+def select_model(training_set):
+    assert hasattr(training_set, "input")
+    assert hasattr(training_set, "output")
+
     for model in MODELS:
         print(model["name"])
 
@@ -46,7 +49,7 @@ def select_model(input_vectors, output_values):
             scoring="neg_log_loss"
         )
 
-        grid_search.fit(input_vectors, output_values)
+        grid_search.fit(training_set.input, training_set.output)
 
         model["best_model_param"] = grid_search.best_params_
         model["best_model_score"] = -grid_search.best_score_
