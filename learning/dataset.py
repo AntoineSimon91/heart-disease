@@ -38,13 +38,13 @@ class DataSet:
         return self.input
 
     def load_output(self, filename, to_serie=True):
-        """Load dataset input vectors
+        """Load dataset input vectors to 1D vector
 
         Args:
             filename (str): Output values filename.
 
         Returns:
-            input (pandas.DataFrame) : Output values dataframe
+            input (pandas.Serie) : Output values 1D serie
         """
         print("load output")
         self.output = self._load_dataframe(filename)
