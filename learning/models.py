@@ -4,7 +4,7 @@ from sklearn.model_selection import KFold, GridSearchCV
 
 
 def select_best_model(training_set, models):
-    print("Select model (estimator, hyperparameters):")
+    print("Select best model (estimator, hyperparameters):")
     best_model = None
     global_best_score = 0
 
