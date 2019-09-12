@@ -55,5 +55,5 @@ def select_model(training_set):
         model["best_model_score"] = -grid_search.best_score_
         model["best_model_estimator"] = grid_search.best_estimator_
 
-        print("Best Score: {}".format(model["best_model_score"]))
-        print("Best Parameters: {}\n".format(model["best_model_param"]))
+        print(f"Best Score: {model['best_model_score']}")
+        print(f"Best Parameters: {model['best_model_param']}")
