@@ -1,59 +1,48 @@
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
+
+# third party imports
 from sklearn.model_selection import KFold, GridSearchCV
-from sklearn.tree import DecisionTreeClassifier
-
-MODELS = [
-    {
-        "name": "logistic regression",
-        "estimator": LogisticRegression(),
-        "hyperparameters": {
-            "solver": ["newton-cg", "lbfgs", "liblinear"]
-        }
-    },
-    {
-        "name": "decision tree",
-        "estimator": DecisionTreeClassifier(),
-        "hyperparameters": {
-            "max_features": ["log2", "sqrt"],
-            "min_samples_leaf": [1, 5, 8]
-        }
-    },
-    {
-        "name": "random forest",
-        "estimator": RandomForestClassifier(),
-        "hyperparameters":
-        {
-            "n_estimators": [4, 6, 9],
-            "criterion": ["entropy", "gini"],
-            "max_depth": [2, 5, 10],
-            "max_features": ["log2", "sqrt"],
-            "min_samples_leaf": [1, 5, 8],
-            "min_samples_split": [2, 3, 5]
-        }
-    }
-]
 
 
-def select_model(training_set):
-    assert hasattr(training_set, "input")
-    assert hasattr(training_set, "output")
+def select_best_model(training_set, models):
+    print("Select model (estimator, hyperparameters):")
+    best_model = None
+    global_best_score = 0
 
-    for model in MODELS:
-        print(model["name"])
+    for model in models:
+        best_score = model.fit_best_hyperparameters(training_set)
+        if best_score > global_best_score:
+            best_model = model
+
+    return best_model
+
+
+class Model:
+    def __init__(self, name, estimator, hyperparameters):
+        self.name = name
+        self.estimator = estimator
+        self.hyperparameters = hyperparameters
+        self.cross_validation = KFold(10, shuffle=True)
+        self.scoring_function = "neg_log_loss"
+
+    def fit_best_hyperparameters(self, training_set):
+        assert hasattr(training_set, "input")
+        assert hasattr(training_set, "output")
+
+        print(f"  {self.name}:")
 
         grid_search = GridSearchCV(
-            estimator=model["estimator"],
-            param_grid=model["hyperparameters"],
-            cv=KFold(10, shuffle=True),
-            scoring="neg_log_loss"
+            estimator=self.estimator,
+            param_grid=self.hyperparameters,
+            cv=self.cross_validation,
+            scoring=self.scoring_function
         )
 
         grid_search.fit(training_set.input, training_set.output)
 
-        model["best_model_param"] = grid_search.best_params_
-        model["best_model_score"] = -grid_search.best_score_
-        model["best_model_estimator"] = grid_search.best_estimator_
+        self.best_hyperparameters = grid_search.best_params_
+        self.best_score = -grid_search.best_score_
 
-        print(f"Best Score: {model['best_model_score']}")
-        print(f"Best Parameters: {model['best_model_param']}")
+        print(f"    Best Score: {self.best_score:.2f}")
+        print(f"    Best Parameters: {self.best_hyperparameters}")
+
+        return self.best_score
