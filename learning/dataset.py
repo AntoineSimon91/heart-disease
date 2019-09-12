@@ -16,7 +16,6 @@ class DataSet:
         data_directory (pathlib.Path) : Data directory
         input (pandas.DataFrame) : Input vectors dataframe
         output (pandas.DataFrame): output value dataframe
-
     """
 
     def __init__(self, data_dirpath="data"):
