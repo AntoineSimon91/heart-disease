@@ -41,6 +41,7 @@ class Model:
 
         self.best_hyperparameters = grid_search.best_params_
         self.best_score = -grid_search.best_score_
+        self.estimator = grid_search.best_estimator_
 
         print(f"    Best Score: {self.best_score:.2f}")
         print(f"    Best Parameters: {self.best_hyperparameters}")
