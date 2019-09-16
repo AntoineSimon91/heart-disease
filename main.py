@@ -79,10 +79,10 @@ def main():
     assert not test.has_null_values()
     test.normalize_input()
 
-    prediction = model.estimator.predict(test.input)
+    prediction = model.estimator.predict_proba(test.input)
 
     test.output = pd.DataFrame(
-        data=prediction,
+        data=prediction[:,1],
         index=test.input.index,
         columns=["heart_disease_present"]
     )
