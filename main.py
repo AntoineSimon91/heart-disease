@@ -82,7 +82,7 @@ def main():
     prediction = model.estimator.predict_proba(test.input)
 
     test.output = pd.DataFrame(
-        data=prediction[:,1],
+        data=prediction[:, 1],
         index=test.input.index,
         columns=["heart_disease_present"]
     )
